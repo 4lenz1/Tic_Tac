@@ -1,50 +1,63 @@
-import QtQuick 2.3
+import QtQuick 2.4
 import QtQuick.Controls 1.2
 
 ApplicationWindow {
+    id:window
     visible: true
     width: 500
     height: 500
     title: qsTr("Hello World")
+    onWidthChanged: {
+        adjustline();
+    }
+    onHeightChanged: {
+        adjustline();
+    }
 
     Item{
         id:itemMain
-        anchors.fill: parent
+        anchors.centerIn: parent
+        width: parent.width
+        height: parent.height
 
-        //anchors.centerIn: parent
-        //width: parent.width
-        //height: width
-
-        Rectangle{
-            id : col1
-            width: 5
-            height: parent.height
-            x: parent.width * 2 /3 - width
-            color: "black"
+        Component.onCompleted: {
+            drawLine();
+            drawCircle();
         }
+    }
 
-        Rectangle{
-            id : col2
-            width: 5
-            height: parent.height
-            x: parent.width * 1 /3 - width
-            color: "black"
+    function adjustline(){
+        if(window.height > window.width){
+            itemMain.width = itemMain.height = window.width;
+        }else if(window.height < window.width){
+            itemMain.width = itemMain.height = window.height;
+        }else{
+            itemMain.width = itemMain.height = window.height;
         }
+    }
+    function drawLine(){
+        for(var col = 1 ; col < 3 ; col++){
+            var colLne = Qt.createQmlObject('import QtQuick 2.4; Rectangle {
+                color: "black";
+                width: 5; height: parent.height;
+                x: parent.width * '+col+'/3 - width;}',
+                itemMain, "col"+col);
+        }
+        for(var row = 1 ; row < 3 ; row++){
+            var rowLine = Qt.createQmlObject('import QtQuick 2.4;Rectangle {
+                color: "black";
+                width: parent.width ; height:5;
+                y:parent.height * '+row+' /3 - height;}',
+                itemMain, "row"+row);
+        }
+    }
 
-        Rectangle{
-            id : row1
-            height : 5
-            width: parent.width
-            y: parent.height* 2 /3 - height
-            color: "black"
-        }
-
-        Rectangle{
-            id : row2
-            height: 5
-            width: parent.width
-            y: parent.height * 1 /3 - height
-            color: "black"
-        }
+    function drawCircle(){
+        var circle = Qt.createQmlObject('import QtQuick 2.4;Rectangle {
+            color: "red";
+            width: parent.width / 3 -10 ; height:width;
+            radius : width * .5;
+            y:100;}',
+            itemMain, "circle");
     }
 }
